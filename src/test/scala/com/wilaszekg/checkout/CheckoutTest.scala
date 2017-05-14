@@ -30,18 +30,40 @@ class CheckoutTest extends WordSpec {
       }
     }
 
-    val checkoutWithOffers = new Checkout(enableApplesOffer = true)
+    val checkoutWithOffers = Checkout.withOffers
     "apply Apples offer" when {
       "2 apples" in {
-        val basket = Basket(List(Apple, Apple))
+        val basket = Basket(List.fill(2)(Apple))
 
         checkoutWithOffers.totalCost(basket) shouldBe unitPrice(Apple)
       }
 
       "3 apples" in {
-        val basket = Basket(List(Apple, Apple, Apple))
+        val basket = Basket(List.fill(3)(Apple))
 
-        checkoutWithOffers.totalCost(basket) shouldBe unitPrice(Apple) + unitPrice(Apple)
+        checkoutWithOffers.totalCost(basket) shouldBe unitPrice(Apple) * 2
+      }
+    }
+
+    "apply Oranges offer" when {
+      "3 oranges" in {
+        val basket = Basket(List.fill(3)(Orange))
+
+        checkoutWithOffers.totalCost(basket) shouldBe unitPrice(Orange) * 2
+      }
+
+      "5 oranges" in {
+        val basket = Basket(List.fill(5)(Orange))
+
+        checkoutWithOffers.totalCost(basket) shouldBe unitPrice(Orange) * 4
+      }
+    }
+
+    "apply multiple offers" when {
+      "multiple Apples and Oranges" in {
+        val basket = Basket(List.fill(5)(Orange) ++ List.fill(5)(Apple))
+
+        checkoutWithOffers.totalCost(basket) shouldBe (unitPrice(Orange) * 4) + (unitPrice(Apple) * 3)
       }
     }
   }
